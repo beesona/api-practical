@@ -1,0 +1,97 @@
+{
+    "apiSettings": {
+        "localPort": "3000"
+    },
+    "endPoints": {
+        "securityTokenV1Authenticate": {
+            "host": "https://development.nelnet.io/authapi/",
+            "resource": "authenticate"
+        }
+    },
+    "credentials": {
+        "aws": {
+            "accessKeyId": "AKIAIRBNVRIR5FZ2YS4A",
+            "secretAccessKey": "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",
+            "region": "us-west-2"
+        }
+    },
+    "awsArns": {
+        "eventGlobalTopic": {
+            "arn": "arn:aws:sns:us-west-2:047738714325:dev-quasarglobal"
+        }
+    },
+    "dataSources": {
+        "name": "<dbname>_request",
+        "database": "<dbname>"
+    },
+    "log4js": {
+        "appenders": {
+            "console": {
+                "type": "console",
+                "layout": {
+                    "type": "pattern",
+                    "pattern": "{\"dateTime\": \"%d\", \"logLevel\": \"%-5p\", \"hostName\": \"%h\", \"logCategory\": \"%c\", \"data\": %m}%n"
+                }
+            },
+            "consoleInfo": {
+                "type": "console",
+                "layout": {
+                    "type": "pattern",
+                    "pattern": "{\"dateTime\": \"%d\", \"logLevel\": \"%-5p\", \"hostName\": \"%h\", \"logCategory\": \"%c\", \"data\": \"%m\"}%n"
+                }
+            },
+            "json": {
+                "type": "console",
+                "layout": {
+                    "type": "json",
+                    "separator": ","
+                }
+            },
+            "color": {
+                "type": "console",
+                "layout": {
+                    "type": "colored"
+                }
+            }
+        },
+        "categories": {
+            "default": {
+                "appenders": [
+                    "json"
+                ],
+                "level": "debug"
+            },
+            "metrics": {
+                "appenders": [
+                    "json"
+                ],
+                "level": "debug"
+            },
+            "errors": {
+                "appenders": [
+                    "json"
+                ],
+                "level": "debug"
+            },
+            "info": {
+                "appenders": [
+                    "json",
+                    "color"
+                ],
+                "level": "info"
+            },
+            "trace": {
+                "appenders": [
+                    "json"
+                ],
+                "level": "debug"
+            },
+            "routes": {
+                "appenders": [
+                    "json"
+                ],
+                "level": "debug"
+            }
+        }
+    }
+}

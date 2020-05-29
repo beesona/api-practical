@@ -1,0 +1,49 @@
+name: Static Sonar Analysis
+on:
+  repository_dispatch:
+    types: [sonar-scan]
+
+jobs:
+  sonar:
+    name: Sonar
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.SERVICING_DEPLOY_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.SERVICING_DEPLOY_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.SERVICING_DEPLOY_AWS_REGION }}
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: checkout repository
+        id: checkout-repository
+        uses: actions/checkout@v1
+        with:
+          ref: ${{ github.event.client_payload.commitid }}
+      - name: Setup variables
+        run: |
+          export SERVICENAME=$(jq -r .ServiceName .github/workflows/options.json)
+          echo "::set-env name=SERVICENAME::$SERVICENAME"
+
+      - name: Run Static Sonar Analysis
+        id: sonar-analysis
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: sonar-with-cert
+          IMAGE_TAG: with-build
+          AWSKEY: ${{ secrets.SERVICING_DEPLOY_AWS_ACCESS_KEY_ID }}
+          AWSSECRET: ${{ secrets.SERVICING_DEPLOY_AWS_SECRET_ACCESS_KEY }}
+          AWSREGION: ${{ secrets.SERVICING_DEPLOY_AWS_REGION }}
+        run: |
+          echo ${PWD}
+          ls
+          docker run \
+          -e SONAR_HOST_URL=https://dev.sonar.nelnet.info:44300/ \
+          -e SONAR_TOKEN=${{ secrets.SERVICING_DEPLOY_SONAR_TOKEN }} \
+          -e SONAR_SCANNER_OPTS="-Djavax.net.ssl.trustStore=/mytruststore -Dsonar.projectKey=${{ env.SERVICENAME }}" \
+          -e AWSKEY=$AWSKEY -e AWSSECRET=$AWSSECRET -e AWSREGION=$AWSREGION \
+          -v ${PWD}:/usr/src \
+          $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG

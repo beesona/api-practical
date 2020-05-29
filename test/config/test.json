@@ -1,0 +1,20 @@
+{
+    "credentials": {
+        "tokenClientActive": {
+            "clientKey": "G7Sm3oR3oXcXD7Active",
+            "clientSecret": "Rz7sp78MYtFxsCsA6CdIJo0q06ACrmCJss1VCRF9Ou1PvjoyXGbGRZky4M6JWUtarxfCTSP2tSLHrzWWjlqh13"
+        },
+        "tokenClientInActive": {
+            "clientKey": "G7Sm3oR3oXcXD7NotActive",
+            "clientSecret": "Rz7sp78MYtFxsCsA6CdIJo0q06ACrmCJss1VCRF9Ou1PvjoyXGbGRZky4M6JWUtarxfCTSP2tSLHrzWWjlqh13"
+        },
+        "tokenClientBadKey": {
+            "clientKey": "G7Sm3oR3oXcXD7ActiveBAD",
+            "clientSecret": "Rz7sp78MYtFxsCsA6CdIJo0q06ACrmCJss1VCRF9Ou1PvjoyXGbGRZky4M6JWUtarxfCTSP2tSLHrzWWjlqh13"
+        },
+        "tokenClientBadSecret": {
+            "clientKey": "G7Sm3oR3oXcXD7Active",
+            "clientSecret": "Rz7sp78MYtFxsCsA6CdIJo0q06ACrmCJss1VCRF9Ou1PvjoyXGbGRZky4M6JWUtarxfCTSP2tSLHrzWWjlqh13Bad"
+        }
+    }
+}

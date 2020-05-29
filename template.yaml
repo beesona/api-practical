@@ -1,0 +1,166 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform:
+- AWS::Serverless-2016-10-31
+Description: <SERVICENAME>
+
+Parameters:
+  ServiceName:
+    Type: String
+    Description: "do not fill in - passed in from buildspec"
+  Environment:
+    Type: String
+    Description: "do not fill in - passed in from buildspec"
+    AllowedValues:
+      - dev
+      - qa
+      - train
+      - prod
+  BuildId:
+    Type: String
+    Description: "do not fill in - passed in from buildspec"
+  RoleStackName:
+    Type: String
+    Default: QuasarDeployRoles
+  AssetBucket:
+    Type: String
+    Default: quasardeployroles-artifactbucket-dukayy2h5ywl
+
+
+Mappings:
+  BuildEnvs:
+    dev:
+      DomainName: development.nelnet.io
+      StageName: v1
+    qa:
+      DomainName: qa.nelnet.io
+      StageName: v1
+    train:
+      DomainName: train.nelnet.io
+      StageName: v1
+    prod:
+      DomainName: api.nelnet.io
+      StageName: v1
+
+
+Resources:
+  InvokeServicePermission:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref ServiceLambda
+      Principal: apigateway.amazonaws.com
+
+  Api:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: !FindInMap [ BuildEnvs, !Ref "Environment", StageName ]
+      Cors:
+        AllowHeaders: "'Origin,X-Requested-With,Content-Type,Accept,clientid,servicerid,tenantid,authorization'"
+      TracingEnabled: true
+      MethodSettings:
+        - ThrottlingRateLimit: 10000
+          ThrottlingBurstLimit: 5000
+          DataTraceEnabled: true
+          LoggingLevel: INFO
+          MetricsEnabled: false
+          HttpMethod: '*'
+          ResourcePath: /*
+      # swagger.json is built during the build phase from the yaml, so that it can use all the yml features, such as anchors that aren't understood by aws yaml parser.
+      DefinitionBody:
+        'Fn::Transform':
+          Name: 'AWS::Include'
+          Parameters:
+            Location: !Join
+                - ""
+                -
+                  - "s3://"
+                  - !Ref AssetBucket
+                  - '/'
+                  - !Ref ServiceName
+                  - '/'
+                  - !Ref BuildId
+                  - '/swagger.json'
+
+  ApiMapping:
+    Type: 'AWS::ApiGateway::BasePathMapping'
+    Properties:
+      BasePath: <APINAME>
+      DomainName: !FindInMap [ BuildEnvs, !Ref "Environment", DomainName ]
+      RestApiId: !Ref Api
+      Stage: !FindInMap [ BuildEnvs, !Ref "Environment", StageName ]
+    DependsOn: ApiStage
+
+  ServiceLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/lambda.handler
+      Timeout: 300
+      MemorySize: 1024
+      Runtime: nodejs12.x
+      CodeUri: ""
+      Tracing: Active
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSLambdaVPCAccessExecutionRole
+        - AmazonSNSFullAccess
+        - SecretsManagerReadWrite
+      VpcConfig:
+        SecurityGroupIds:
+          - !ImportValue 'QuasarRDS-DBSecurityGroup'
+        SubnetIds:
+          - !ImportValue "QuasarVPC-PrivateSubnet1Id"
+          - !ImportValue "QuasarVPC-PrivateSubnet2Id"
+          - !ImportValue "QuasarVPC-PrivateSubnet3Id"
+      Environment:
+        Variables:
+          Region: !Ref 'AWS::Region'
+          NODE_ENV: !Ref Environment # rename to whatever env variable should be called
+          COGNITO_SECRET: cognito-admin
+          DB_SECRET: quasarwriter-postgres
+      Events:
+        QueryCPC:
+          Type: Api
+          Properties:
+            RestApiId: !Ref Api
+            Path: /*
+            Method: any
+
+  LogGroupService:
+    Type: "AWS::Logs::LogGroup"
+    Properties:
+      LogGroupName: !Join ['', ["/aws/lambda/",
+                      !Ref ServiceLambda
+                    ]
+                  ]
+
+  LogLambdaWritesSubscription:
+    Type: 'AWS::Logs::SubscriptionFilter'
+    Properties:
+      DestinationArn: !ImportValue CloudwatchKinesisStream
+      RoleArn: !ImportValue CWLtoKinesisRole
+      FilterPattern: '[timestamp=*Z, request_id="*-*", event]'
+      LogGroupName: !Join 
+        - ''
+        - - /aws/lambda/
+          - !Ref ServiceLambda
+    DependsOn:
+      - LogGroupService
+
+
+Outputs:
+  Api:
+    Description: Api
+    Value: !Ref Api
+    Export:
+      Name: !Sub '${ServiceName}-Api'
+  ApiUrl:
+    Description: URL for application
+    Value: !Join
+      - ''
+      - - 'https://'
+        - !Ref Api
+        - '.execute-api.'
+        - !Ref 'AWS::Region'
+        - '.amazonaws.com/v1'
+    Export:
+      Name: !Sub '${ServiceName}-ApiUrl'

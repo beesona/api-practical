@@ -1,0 +1,40 @@
+name: Trigger-Build-Deploy-Scan
+on: push
+
+jobs:
+  Trigger-Build-Deploy-Scan:
+    runs-on: ubuntu-latest
+    steps:
+         
+      - name: Setup variables
+        run: |
+          export BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          if [ $BRANCH_NAME = "master" ]; then
+            echo "::set-env name=ENVIRONMENT::qa"
+          else
+            echo "::set-env name=ENVIRONMENT::dev"
+          fi
+
+      - name: Trigger ${{ env.ENVIRONMENT }} deployment
+        uses: actions/github-script@v1
+        with:
+          github-token: ${{ secrets.SERVICING_REPO_GITHUB_TOKEN }} 
+          previews: ant-man-preview
+          script: |
+            github.repos.createDeployment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: context.sha,
+              environment: "${{ env.ENVIRONMENT }}",
+              auto_merge: false,
+              required_contexts: []
+            })
+
+      - name: trigger-${{ github.event.deployment.environment }}-scan
+        run: |
+          curl \
+          -u "${{ secrets.SERVICING_DEPLOY_GITHUB_TOKEN }}" \
+          -H "Content-Type: application/json" \
+          -d "{ \"event_type\": \"sonar-scan\", \"client_payload\": { \"commitid\": \"$GITHUB_SHA\" }}" \
+          -X POST \
+          https://api.github.com/repos/$GITHUB_REPOSITORY/dispatches

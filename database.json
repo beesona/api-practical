@@ -1,0 +1,24 @@
+{
+    "defaultEnv": {
+        "ENV": "NODE_ENV"
+    },
+    "migrate": {
+        "driver": "pg",
+        "user":  {"ENV": "DB_USERID"},
+        "password": {"ENV": "DB_PASSWORD"},
+        "host": "localhost",
+        "database": {"ENV": "DB_NAME"},
+        "schema": "public",
+        "port": {"ENV": "DB_PORT"}
+    },
+    "create": {
+        "driver": "pg",
+        "user":  {"ENV": "DB_USERID"},
+        "password": {"ENV": "DB_PASSWORD"},
+        "host": "localhost",
+        "database": "postgres",
+        "schema": "public",
+        "port": {"ENV": "DB_PORT"}
+    },   
+    "sql-file": true
+}

@@ -1,0 +1,84 @@
+{
+    "apiSettings": {
+        "localPort": "3000"
+    },
+    "endPoints": {
+        "securityTokenV1Authenticate": {
+            "host": "https://api.nelnet.io/authapi/",
+            "resource": "authenticate"
+        }
+    },
+    "credentials": {
+        "aws": {
+            "accessKeyId": "",
+            "secretAccessKey": "",
+            "region": "us-west-2"
+        }
+    },
+    "awsArns": {
+        "eventGlobalTopic": {
+            "arn": "arn:aws:sns:us-west-2:859196241863:prod-quasarglobal"
+        }
+    },
+    "dataSources": {
+        "name": "<dbname>_request",
+        "database": "<dbname>"
+    },
+    "log4js": {
+        "appenders": {
+            "console": {
+                "type": "console",
+                "layout": {
+                    "type": "pattern",
+                    "pattern": "{\"dateTime\": \"%d\", \"logLevel\": \"%-5p\", \"hostName\": \"%h\", \"logCategory\": \"%c\", \"data\": %m}%n"
+                }
+            },
+            "consoleInfo": {
+                "type": "console",
+                "layout": {
+                    "type": "pattern",
+                    "pattern": "{\"dateTime\": \"%d\", \"logLevel\": \"%-5p\", \"hostName\": \"%h\", \"logCategory\": \"%c\", \"data\": \"%m\"}%n"
+                }
+            },
+            "json": {
+                "type": "console",
+                "layout": {
+                    "type": "json",
+                    "separator": ","
+                }
+            }
+        },
+        "categories": {
+            "default": {
+                "appenders": [
+                    "json"
+                ],
+                "level": "info"
+            },
+            "metric": {
+                "appenders": [
+                    "json"
+                ],
+                "level": "info"
+            },
+            "error": {
+                "appenders": [
+                    "json"
+                ],
+                "level": "error"
+            },
+            "info": {
+                "appenders": [
+                    "json"
+                ],
+                "level": "info"
+            },
+            "routes": {
+                "appenders": [
+                    "json"
+                ],
+                "level": "info"
+            }
+        }
+    }
+}

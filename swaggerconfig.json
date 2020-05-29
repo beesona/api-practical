@@ -1,0 +1,39 @@
+{
+    "swagger": {
+        "name": "<SERVICENAME>",
+        "version": "1.0.0",
+        "description": "The <SERVICENAME> REST APIs provide a convenient access point for developers interested in using our services.",
+        "basePath": "/",
+        "produces": ["application/json"],
+        "outputDirectory": "./dist",
+        "entryFile": "./src/App.ts",
+        "yaml": true,
+        "securityDefinitions": {
+            "bearer_key": {
+                "type": "apiKey",
+                "name": "authorization",
+                "in": "header",
+                "x-amazon-apigateway-authtype": "jwt",
+                "x-amazon-apigateway-authorizer": {
+                    "type": "token",
+                    "authorizerUri": {
+                      "Fn::ImportValue": "nelnetauth-Authorizer-Uri"
+                    },
+                    "authorizerResultTtlInSeconds": 600
+                }
+            }
+        },
+        "spec": {
+            "info": {
+                "termsOfService": "http://nelnet.net/",
+                "contact": {
+                    "email": "QuasarTeam@nelnet.net"
+                },
+                "license": {
+                    "name": "License Agreement",
+                    "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+                }
+            }
+        }
+    }
+}

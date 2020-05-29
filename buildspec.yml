@@ -1,0 +1,36 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 12
+  pre_build:
+    commands:
+      - pip install --upgrade awscli
+      - npm install -g npm@6.13.4
+      - BUILDROOT=$(pwd)
+      - echo "CodeBuild Id $CODEBUILD_BUILD_ID"
+  build:
+    commands:
+      - npm run build-ci
+      - find ./node_modules/* -mtime +10950 -exec touch {} \;
+      - node swagger-fix.js
+      # create config files for each environment so that when we build the stack we know what were building for
+      # these config are passed in as the TemplateConfiguration in the code-pipeline
+      - echo "{\"Parameters\":{\"ServiceName\":\"$SERVICE_NAME\",\"Environment\":\"dev\",\"BuildId\":\"$CODEBUILD_BUILD_ID\"}}" > dev-conf.json
+      - echo "{\"Parameters\":{\"ServiceName\":\"$SERVICE_NAME\",\"Environment\":\"qa\",\"BuildId\":\"$CODEBUILD_BUILD_ID\"}}" > qa-conf.json
+      - echo "{\"Parameters\":{\"ServiceName\":\"$SERVICE_NAME\",\"Environment\":\"train\",\"BuildId\":\"$CODEBUILD_BUILD_ID\"}}" > train-conf.json
+      - echo "{\"Parameters\":{\"ServiceName\":\"$SERVICE_NAME\",\"Environment\":\"prod\",\"BuildId\":\"$CODEBUILD_BUILD_ID\"}}" > prod-conf.json
+      - aws cloudformation package --template-file template.yaml --s3-bucket $S3Bucket --output-template-file app-output_sam.yaml
+  post_build:
+    commands:
+      # fix-swagger moves ./dist/swagger.json to ./swagger.json and adds gatewat integration
+      - aws s3 cp ./swagger.json s3://$S3Bucket/$SERVICE_NAME/$CODEBUILD_BUILD_ID/swagger.json --acl public-read
+
+artifacts:
+  files:
+    - 'dist/**/*'
+    - 'node_modules/**/*'
+    - 'package.json'
+    - app-output_sam.yaml
+    - '*-conf.json'

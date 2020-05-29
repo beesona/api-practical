@@ -1,0 +1,37 @@
+{
+  "appenders": {
+    "console": {
+      "type": "console",
+      "layout": {
+        "type": "pattern",
+        "pattern": "%d %-5p %h %c - %m%n"
+      }
+    }
+  },
+  "categories": {
+    "default": {
+      "appenders": [
+        "console"
+      ],
+      "level": "debug"
+    },
+    "metrics": {
+      "appenders": [
+        "console"
+      ],
+      "level": "debug"
+    },
+    "errors": {
+      "appenders": [
+        "console"
+      ],
+      "level": "error"
+    },
+    "routes": {
+      "appenders": [
+        "console"
+      ],
+      "level": "debug"
+    }
+  }
+}

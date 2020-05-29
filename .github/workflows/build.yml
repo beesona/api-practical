@@ -1,0 +1,102 @@
+name: Deploy Microservice
+ 
+on: deployment
+ 
+jobs:
+  build:
+    name: ${{ github.event.deployment.environment }}-build
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.SERVICING_DEPLOY_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.SERVICING_DEPLOY_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.SERVICING_DEPLOY_AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+ 
+      - name: checkout repository
+        uses: actions/checkout@v1
+        with:
+          ref: ${{ github.event.deployment.ref}}
+
+      - name: Setup variables
+        run: |
+          export SERVICENAME=$(jq -r .ServiceName .github/workflows/options.json)
+          export DATABASENAME=$(jq -r .DatabaseName .github/workflows/options.json)
+          export ENVIRONMENT=${{ github.event.deployment.environment}}
+          export COMMITID=${{ github.event.deployment.ref }}
+          echo "::set-env name=COMMITID::$COMMITID"
+          echo "::set-env name=SERVICENAME::$SERVICENAME"
+          echo "::set-env name=DATABASENAME::$DATABASENAME"
+          if [ $ENVIRONMENT = "dev" ]; then
+            echo "::set-env name=AWSACCOUNT::047738714325"
+          elif [ $ENVIRONMENT = "qa"  ]; then
+            echo "::set-env name=AWSACCOUNT::100197454175"
+          elif [ $ENVIRONMENT = "train"  ]; then
+            echo "::set-env name=AWSACCOUNT::473415446686"
+          elif [ $ENVIRONMENT = "prod"  ]; then
+            echo "::set-env name=AWSACCOUNT::859196241863"
+          else
+            echo "::set-env name=AWSACCOUNT::047738714325"
+          fi        
+    
+      - name: Set deployment status in-progress 
+        uses: actions/github-script@v1
+        with:
+          previews: flash-preview
+          script: |
+            github.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: ${{ github.event.deployment.id }},
+              state: "in_progress"
+            })      
+
+      - name: Build using ECR image
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: velocitybuild
+          IMAGE_TAG: latest
+          AWSSECRET: ${{ secrets.SERVICING_DEPLOY_AWS_SECRET_ACCESS_KEY }}
+          AWSKEY: ${{ secrets.SERVICING_DEPLOY_AWS_ACCESS_KEY_ID }}
+          AWSREGION: ${{ secrets.SERVICING_DEPLOY_AWS_REGION }}
+          ENVIRONMENT: ${{ github.event.deployment.environment }}
+        run: |
+          docker run \
+          -e SERVICE_NAME=${{ env.SERVICENAME }} \
+          -e DATABASE=${{ env.DATABASENAME }} \
+          -e S3BUCKET='zzztestmybucket' \
+          -e BUILD_ENV=${{ github.event.deployment.environment }} \
+          -e COMMITID=${{ github.event.deployment.ref }} \
+          -e AWSKEY=$AWSKEY \
+          -e AWSSECRET=$AWSSECRET \
+          -e AWSREGION=$AWSREGION \
+          -e AWSACCOUNT=${{ env.AWSACCOUNT }} \
+          -v ${PWD}:/${{ env.SERVICENAME }} -w /${{ env.SERVICENAME }} \
+          $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Update deployment status outcome
+        if: steps.build-image.outcome == 'success' || steps.build-image.outcome == 'failure'
+        uses: actions/github-script@v1
+        with:
+          previews: flash-preview,ant-man-preview
+          script: |
+            github.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: ${{ github.event.deployment.id }},
+              state: "${{ steps.build-image.outcome }}",
+              auto_inactive: ${{ steps.build-image.outcome == 'success' }}
+            })
+
+      - name: upload-artifact    
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{ github.event.deployment.environment }}-artifact
+          path: ./dist
