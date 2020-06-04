@@ -1,1 +1,1 @@
-{ "ServiceName": "--MICROSERVICENAME--", "DatabaseName": "--DATABASENAME--" }
+{ "ServiceName": "Microservice-DBTest", "DatabaseName": "dbtest" }

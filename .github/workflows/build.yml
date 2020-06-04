@@ -20,9 +20,26 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
  
       - name: checkout repository
-        uses: actions/checkout@v1
+        id: checkout
+        uses: actions/checkout@v2
         with:
           ref: ${{ github.event.deployment.ref}}
+      
+
+
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+      - name: Dump job context
+        env:
+          JOB_CONTEXT: ${{ toJson(job) }}
+        run: echo "$JOB_CONTEXT"
+      - name: Dump steps context
+        env:
+          STEPS_CONTEXT: ${{ toJson(steps) }}
+        run: echo "$STEPS_CONTEXT"
+
 
       - name: Setup variables
         run: |
@@ -30,19 +47,36 @@ jobs:
           export DATABASENAME=$(jq -r .DatabaseName .github/workflows/options.json)
           export ENVIRONMENT=${{ github.event.deployment.environment}}
           export COMMITID=${{ github.event.deployment.ref }}
-          echo "::set-env name=COMMITID::$COMMITID"
+          export HTMLURL=${{ github.event.repository.html_url}}
+          export COMMITURL="$HTMLURL/commit/$COMMITID"
+          export CODEURL="$HTMLURL/tree/$COMMITID"
+          export ACTIONSURL="$HTMLURL/actions/runs/${{ github.run_id }}"
+          export COMMITMESSAGE=$(git log --format=%B -n 1 $COMMITID)
           echo "::set-env name=SERVICENAME::$SERVICENAME"
           echo "::set-env name=DATABASENAME::$DATABASENAME"
+          echo "::set-env name=ENVIRONMENT::$ENVIRONMENT"
+          echo "::set-env name=COMMITID::$COMMITID"        
+          echo "::set-env name=HTMLURL::$HTMLURL"
+          echo "::set-env name=COMMITURL::$COMMITURL"
+          echo "::set-env name=CODEURL::$CODEURL"
+          echo "::set-env name=ACTIONSURL::$ACTIONSURL"
+          echo "::set-env name=COMMITMESSAGE::$COMMITMESSAGE"
+          echo "::set-env name=TEAMSURL::https://outlook.office.com/webhook/297225ee-7306-43e6-9bbf-3b620ce7c9cc@5a5b9e61-20b2-4578-8f37-246881fa0d61/IncomingWebhook/66a7f59f31cc42f5b2ac6a652f43a331/7ac909ce-260b-45cf-a553-7d7ca24c5e91"
           if [ $ENVIRONMENT = "dev" ]; then
             echo "::set-env name=AWSACCOUNT::047738714325"
+            echo "::set-env name=BRANCHURL::$HTMLURL/tree/devdeploy"
           elif [ $ENVIRONMENT = "qa"  ]; then
             echo "::set-env name=AWSACCOUNT::100197454175"
+            echo "::set-env name=BRANCHURL::$HTMLURL/tree/master"
           elif [ $ENVIRONMENT = "train"  ]; then
             echo "::set-env name=AWSACCOUNT::473415446686"
+            echo "::set-env name=BRANCHURL::$HTMLURL/tree/master"
           elif [ $ENVIRONMENT = "prod"  ]; then
             echo "::set-env name=AWSACCOUNT::859196241863"
+            echo "::set-env name=BRANCHURL::$HTMLURL/tree/master"
           else
             echo "::set-env name=AWSACCOUNT::047738714325"
+            echo "::set-env name=BRANCHURL::$HTMLURL/tree/master"
           fi        
     
       - name: Set deployment status in-progress 
@@ -56,6 +90,18 @@ jobs:
               deployment_id: ${{ github.event.deployment.id }},
               state: "in_progress"
             })      
+      
+      - name: Send Teams update in-progress
+        run: |
+          export TITLE="${{ env.SERVICENAME}} - In-Progress"
+          export TEXT="<table><tr><td><b>Environment:</b></td><td><a href='${{ env.BRANCHURL }}'>${{ env.ENVIRONMENT }}</a></td></tr><tr><td><b>Commit Id:</b></td><td><a href='${{ env.CODEURL}}'>${{ env.COMMITID }}</a></td></tr><tr><td><b>Commit Message:</b></td><td><a href='${{ env.COMMITURL }}'>${{ env.COMMITMESSAGE }}</a></td></tr><tr><td><b>Status:</b></td><td><a href='${{ env.ACTIONSURL }}'>In-Progress</a></td></tr></table>"
+          export TEAMSCARD=$(jq --arg title "$TITLE" --arg text "$TEXT"  '.title = $title | .text = $text' -r .github/workflows/teamscard.json)
+          curl \
+          -H 'Content-Type: application/json' \
+          -d "$TEAMSCARD" \
+          -X POST \
+          ${{ env.TEAMSURL }}
+
 
       - name: Build using ECR image
         id: build-image
@@ -94,6 +140,25 @@ jobs:
               state: "${{ steps.build-image.outcome }}",
               auto_inactive: ${{ steps.build-image.outcome == 'success' }}
             })
+
+      - name: Send Teams update result
+        run: |
+          if [ ${{ steps.build-image.outcome }} = "success" ]; then
+            export TITLE="${{ env.SERVICENAME}} - SUCCESS"
+            export THEMECOLOR="00FF00"
+            export STATUS="Success"
+          else
+            export TITLE="${{ env.SERVICENAME}} - FAIL"
+            export THEMECOLOR="FF0000"
+            export STATUS="Failure"
+          fi  
+          export TEXT="<table><tr><td><b>Environment:</b></td><td><a href='${{ env.BRANCHURL }}'>${{ env.ENVIRONMENT }}</a></td></tr><tr><td><b>Commit Id:</b></td><td><a href='${{ env.CODEURL}}'>${{ env.COMMITID }}</a></td></tr><tr><td><b>Commit Message:</b></td><td><a href='${{ env.COMMITURL }}'>${{ env.COMMITMESSAGE }}</a></td></tr><tr><td><b>Status:</b></td><td><a href='${{ env.ACTIONSURL }}'>$STATUS</a></td></tr></table>"
+          export TEAMSCARD=$(jq --arg title "$TITLE" --arg text "$TEXT" --arg themecolor "$THEMECOLOR" '.title = $title | .text = $text | .themeColor = $themecolor' -r .github/workflows/teamscard.json)
+          curl \
+          -H 'Content-Type: application/json' \
+          -d "$TEAMSCARD" \
+          -X POST \
+          ${{ env.TEAMSURL }}
 
       - name: upload-artifact    
         uses: actions/upload-artifact@v1
