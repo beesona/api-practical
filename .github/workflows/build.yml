@@ -128,7 +128,7 @@ jobs:
           $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
       - name: Update deployment status outcome
-        if: steps.build-image.outcome == 'success' || steps.build-image.outcome == 'failure'
+        if: ${{ always() }}
         uses: actions/github-script@v1
         with:
           previews: flash-preview,ant-man-preview
@@ -142,6 +142,7 @@ jobs:
             })
 
       - name: Send Teams update result
+        if: ${{ always() }}
         run: |
           if [ ${{ steps.build-image.outcome }} = "success" ]; then
             export TITLE="${{ env.SERVICENAME}} - SUCCESS"

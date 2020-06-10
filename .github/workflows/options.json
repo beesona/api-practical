@@ -1,1 +1,1 @@
-{ "ServiceName": "--MICROSERVICENAME--", "DatabaseName": "--DATABASENAME--" }
+{ "ServiceName": "--MICROSERVICENAME--", "DatabaseName": "--DATABASENAME--", "CICDEnabled": false }

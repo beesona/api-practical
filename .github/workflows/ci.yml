@@ -6,16 +6,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
          
+      - name: checkout repository
+        id: checkout
+        uses: actions/checkout@v2
+
       - name: Setup variables
         run: |
+          export CICDEnabled=$(jq -r .CICDEnabled .github/workflows/options.json)
           export BRANCH_NAME=${GITHUB_REF#refs/heads/}
           if [ $BRANCH_NAME = "master" ]; then
             echo "::set-env name=ENVIRONMENT::qa"
           else
             echo "::set-env name=ENVIRONMENT::dev"
           fi
+          echo "::set-env name=CICDEnabled::$CICDEnabled"
 
       - name: Trigger ${{ env.ENVIRONMENT }} deployment
+        if: ${{ env.CICDEnabled=='true' }}
         uses: actions/github-script@v1
         with:
           github-token: ${{ secrets.SERVICING_REPO_GITHUB_TOKEN }} 
@@ -31,6 +38,7 @@ jobs:
             })
 
       - name: trigger-${{ github.event.deployment.environment }}-scan
+        if: ${{ env.CICDEnabled=='true' }}
         run: |
           curl \
           -u "${{ secrets.SERVICING_DEPLOY_GITHUB_TOKEN }}" \
