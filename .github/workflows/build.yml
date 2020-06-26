@@ -62,21 +62,17 @@ jobs:
           echo "::set-env name=ACTIONSURL::$ACTIONSURL"
           echo "::set-env name=COMMITMESSAGE::$COMMITMESSAGE"
           echo "::set-env name=TEAMSURL::https://outlook.office.com/webhook/297225ee-7306-43e6-9bbf-3b620ce7c9cc@5a5b9e61-20b2-4578-8f37-246881fa0d61/IncomingWebhook/66a7f59f31cc42f5b2ac6a652f43a331/7ac909ce-260b-45cf-a553-7d7ca24c5e91"
+          echo "::set-env name=DEPLOYURL::$HTMLURL/deployments?environment=$ENVIRONMENT#activity-log"
           if [ $ENVIRONMENT = "dev" ]; then
             echo "::set-env name=AWSACCOUNT::047738714325"
-            echo "::set-env name=BRANCHURL::$HTMLURL/tree/devdeploy"
           elif [ $ENVIRONMENT = "qa"  ]; then
             echo "::set-env name=AWSACCOUNT::100197454175"
-            echo "::set-env name=BRANCHURL::$HTMLURL/tree/master"
           elif [ $ENVIRONMENT = "train"  ]; then
             echo "::set-env name=AWSACCOUNT::473415446686"
-            echo "::set-env name=BRANCHURL::$HTMLURL/tree/master"
           elif [ $ENVIRONMENT = "prod"  ]; then
             echo "::set-env name=AWSACCOUNT::859196241863"
-            echo "::set-env name=BRANCHURL::$HTMLURL/tree/master"
           else
-            echo "::set-env name=AWSACCOUNT::047738714325"
-            echo "::set-env name=BRANCHURL::$HTMLURL/tree/master"
+            echo "::set-env name=AWSACCOUNT::047738714325"        
           fi        
     
       - name: Set deployment status in-progress 
@@ -94,7 +90,7 @@ jobs:
       - name: Send Teams update in-progress
         run: |
           export TITLE="${{ env.SERVICENAME}} - In-Progress"
-          export TEXT="<table><tr><td><b>Environment:</b></td><td><a href='${{ env.BRANCHURL }}'>${{ env.ENVIRONMENT }}</a></td></tr><tr><td><b>Commit Id:</b></td><td><a href='${{ env.CODEURL}}'>${{ env.COMMITID }}</a></td></tr><tr><td><b>Commit Message:</b></td><td><a href='${{ env.COMMITURL }}'>${{ env.COMMITMESSAGE }}</a></td></tr><tr><td><b>Status:</b></td><td><a href='${{ env.ACTIONSURL }}'>In-Progress</a></td></tr></table>"
+          export TEXT="<table><tr><td><b>Environment:</b></td><td><a href='${{ env.DEPLOYURL }}'>${{ env.ENVIRONMENT }}</a></td></tr><tr><td><b>Commit Id:</b></td><td><a href='${{ env.CODEURL}}'>${{ env.COMMITID }}</a></td></tr><tr><td><b>Commit Message:</b></td><td><a href='${{ env.COMMITURL }}'>${{ env.COMMITMESSAGE }}</a></td></tr><tr><td><b>Status:</b></td><td><a href='${{ env.ACTIONSURL }}'>In-Progress</a></td></tr></table>"
           export TEAMSCARD=$(jq --arg title "$TITLE" --arg text "$TEXT"  '.title = $title | .text = $text' -r .github/workflows/teamscard.json)
           curl \
           -H 'Content-Type: application/json' \
@@ -153,7 +149,7 @@ jobs:
             export THEMECOLOR="FF0000"
             export STATUS="Failure"
           fi  
-          export TEXT="<table><tr><td><b>Environment:</b></td><td><a href='${{ env.BRANCHURL }}'>${{ env.ENVIRONMENT }}</a></td></tr><tr><td><b>Commit Id:</b></td><td><a href='${{ env.CODEURL}}'>${{ env.COMMITID }}</a></td></tr><tr><td><b>Commit Message:</b></td><td><a href='${{ env.COMMITURL }}'>${{ env.COMMITMESSAGE }}</a></td></tr><tr><td><b>Status:</b></td><td><a href='${{ env.ACTIONSURL }}'>$STATUS</a></td></tr></table>"
+          export TEXT="<table><tr><td><b>Environment:</b></td><td><a href='${{ env.DEPLOYURL }}'>${{ env.ENVIRONMENT }}</a></td></tr><tr><td><b>Commit Id:</b></td><td><a href='${{ env.CODEURL}}'>${{ env.COMMITID }}</a></td></tr><tr><td><b>Commit Message:</b></td><td><a href='${{ env.COMMITURL }}'>${{ env.COMMITMESSAGE }}</a></td></tr><tr><td><b>Status:</b></td><td><a href='${{ env.ACTIONSURL }}'>$STATUS</a></td></tr></table>"
           export TEAMSCARD=$(jq --arg title "$TITLE" --arg text "$TEXT" --arg themecolor "$THEMECOLOR" '.title = $title | .text = $text | .themeColor = $themecolor' -r .github/workflows/teamscard.json)
           curl \
           -H 'Content-Type: application/json' \
