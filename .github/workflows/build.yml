@@ -113,7 +113,7 @@ jobs:
           docker run \
           -e SERVICE_NAME=${{ env.SERVICENAME }} \
           -e DATABASE=${{ env.DATABASENAME }} \
-          -e S3BUCKET='zzztestmybucket' \
+          -e S3BUCKET='quasar-deploy-artifacts' \
           -e BUILD_ENV=${{ github.event.deployment.environment }} \
           -e COMMITID=${{ github.event.deployment.ref }} \
           -e AWSKEY=$AWSKEY \
