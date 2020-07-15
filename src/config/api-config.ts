@@ -1,10 +1,12 @@
 
 import * as log4js from 'log4js';
+// tslint:disable: no-var-requires
 const local = require('./api.json');
 const dev = require('./dev.json');
 const qa = require('./qa.json');
 const train = require('./train.json');
 const prod = require('./prod.json');
+// tslint:enable: no-var-requires
 
 function getConfig() {
   const parseJSON = (str): any => {
