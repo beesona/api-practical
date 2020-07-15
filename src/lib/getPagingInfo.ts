@@ -1,6 +1,8 @@
 export function getPagingInfo(route: string, offset: number, limit: number, total: number) {
     // TODO: support additional query params on the route
     return {
+        rows: total,
+        pages: limit > 0 ? Math.ceil(total / limit) : 0,
         offset,
         limit,
         links: {

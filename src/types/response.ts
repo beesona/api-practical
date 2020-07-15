@@ -9,6 +9,8 @@ export interface ResponseBodyWithRowCount<T> {
 // export interface PagedResponseBody<T> extends ResponseBody<T[]> {  // broken in typescript-rest-swagger for now...
 export interface PagedResponseBody<T extends any[]> extends ResponseBody<T> {
     paging: {
+        rows: number;
+        pages: number;
         offset: number;
         limit: number;
         links: {
