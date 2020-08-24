@@ -8,13 +8,7 @@
             "resource": "authenticate"
         }
     },
-    "credentials": {
-        "aws": {
-            "accessKeyId": "AKIAIRBNVRIR5FZ2YS4A",
-            "secretAccessKey": "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",
-            "region": "us-west-2"
-        }
-    },
+
     "awsArns": {
         "eventGlobalTopic": {
             "arn": "arn:aws:sns:us-west-2:047738714325:dev-quasarglobal"
