@@ -1,16 +1,16 @@
-export function getPagingInfo(route: string, offset: number, limit: number, total: number) {
-    // TODO: support additional query params on the route
+export function getPagingInfo(route: string, offset: number, limit: number, total: number, additionalParams: string = '') {
+    const pages = limit > 0 ? Math.ceil(total / limit) : 0;
     return {
         rows: total,
-        pages: limit > 0 ? Math.ceil(total / limit) : 0,
+        pages,
         offset,
         limit,
-        links: {
-            first: `${route}?offset=0&limit=${limit}`,
-            last: `${route}?offset=${Math.floor(total / limit) * limit}&limit=${limit}`,
-            previous: offset > 1 ? `${route}?offset=${Math.max(0, offset - limit)}&limit=${limit}` : undefined,
-            next: offset + limit < total ? `${route}?offset=${offset + limit}&limit=${limit}` : undefined
-        }
+        links: route !== '' ? {
+            first: `${route}?offset=0&limit=${limit}${additionalParams}`,
+            last: `${route}?offset=${(pages - 1) * limit}&limit=${limit}${additionalParams}`,
+            previous: offset > 1 && pages > 0 ? `${route}?offset=${Math.max(0, offset - limit)}&limit=${limit}${additionalParams}` : undefined,
+            next: offset + limit < total && pages > 0 ? `${route}?offset=${offset + limit}&limit=${limit}${additionalParams}` : undefined
+        } : undefined
     };
 }
 
