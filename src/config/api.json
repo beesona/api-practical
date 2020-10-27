@@ -8,6 +8,13 @@
             "resource": "authenticate"
         }
     },
+        "credentials": {
+        "aws": {
+            "accessKeyId": "",
+            "secretAccessKey": "",
+            "region": "us-west-2"
+        }
+    },
 
     "awsArns": {
         "eventGlobalTopic": {
