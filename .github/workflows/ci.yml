@@ -1,5 +1,9 @@
 name: Trigger-Build-Deploy-Scan
-on: push
+on:
+  push:
+    branches:
+      - devdeploy
+      - master
 
 jobs:
   Trigger-Build-Deploy-Scan:
