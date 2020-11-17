@@ -20,11 +20,11 @@ jobs:
           export CICDEnabled=$(jq -r .CICDEnabled .github/workflows/options.json)
           export BRANCH_NAME=${GITHUB_REF#refs/heads/}
           if [ $BRANCH_NAME = "master" ]; then
-            echo "::set-env name=ENVIRONMENT::qa"
+            echo "ENVIRONMENT=qa" >> $GITHUB_ENV
           else
-            echo "::set-env name=ENVIRONMENT::dev"
+            echo "ENVIRONMENT=dev" >> $GITHUB_ENV
           fi
-          echo "::set-env name=CICDEnabled::$CICDEnabled"
+          echo "CICDEnabled=$CICDEnabled" >> $GITHUB_ENV
 
       - name: Trigger ${{ env.ENVIRONMENT }} deployment
         if: ${{ env.CICDEnabled=='true' }}

@@ -26,7 +26,7 @@ jobs:
       - name: Setup variables
         run: |
           export SERVICENAME=$(jq -r .ServiceName .github/workflows/options.json)
-          echo "::set-env name=SERVICENAME::$SERVICENAME"
+          echo "SERVICENAME=$SERVICENAME" >> $GITHUB_ENV
 
       - name: Run Static Sonar Analysis
         id: sonar-analysis

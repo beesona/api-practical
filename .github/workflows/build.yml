@@ -52,27 +52,27 @@ jobs:
           export CODEURL="$HTMLURL/tree/$COMMITID"
           export ACTIONSURL="$HTMLURL/actions/runs/${{ github.run_id }}"
           export COMMITMESSAGE=$(git log --format=%B -n 1 $COMMITID)
-          echo "::set-env name=SERVICENAME::$SERVICENAME"
-          echo "::set-env name=DATABASENAME::$DATABASENAME"
-          echo "::set-env name=ENVIRONMENT::$ENVIRONMENT"
-          echo "::set-env name=COMMITID::$COMMITID"        
-          echo "::set-env name=HTMLURL::$HTMLURL"
-          echo "::set-env name=COMMITURL::$COMMITURL"
-          echo "::set-env name=CODEURL::$CODEURL"
-          echo "::set-env name=ACTIONSURL::$ACTIONSURL"
-          echo "::set-env name=COMMITMESSAGE::$COMMITMESSAGE"
-          echo "::set-env name=TEAMSURL::https://outlook.office.com/webhook/297225ee-7306-43e6-9bbf-3b620ce7c9cc@5a5b9e61-20b2-4578-8f37-246881fa0d61/IncomingWebhook/66a7f59f31cc42f5b2ac6a652f43a331/7ac909ce-260b-45cf-a553-7d7ca24c5e91"
-          echo "::set-env name=DEPLOYURL::$HTMLURL/deployments?environment=$ENVIRONMENT#activity-log"
+          echo "SERVICENAME=$SERVICENAME" >> $GITHUB_ENV
+          echo "DATABASENAME=$DATABASENAME" >> $GITHUB_ENV
+          echo "ENVIRONMENT=$ENVIRONMENT" >> $GITHUB_ENV
+          echo "COMMITID=$COMMITID" >> $GITHUB_ENV
+          echo "HTMLURL=$HTMLURL" >> $GITHUB_ENV
+          echo "COMMITURL=$COMMITURL" >> $GITHUB_ENV
+          echo "CODEURL=$CODEURL" >> $GITHUB_ENV
+          echo "ACTIONSURL=$ACTIONSURL" >> $GITHUB_ENV
+          echo "COMMITMESSAGE=$COMMITMESSAGE" >> $GITHUB_ENV
+          echo "TEAMSURL=https://outlook.office.com/webhook/297225ee-7306-43e6-9bbf-3b620ce7c9cc@5a5b9e61-20b2-4578-8f37-246881fa0d61/IncomingWebhook/66a7f59f31cc42f5b2ac6a652f43a331/7ac909ce-260b-45cf-a553-7d7ca24c5e91" >> $GITHUB_ENV
+          echo "DEPLOYURL=$HTMLURL/deployments?environment=$ENVIRONMENT#activity-log" >> $GITHUB_ENV
           if [ $ENVIRONMENT = "dev" ]; then
-            echo "::set-env name=AWSACCOUNT::047738714325"
+            echo "AWSACCOUNT=047738714325" >> $GITHUB_ENV
           elif [ $ENVIRONMENT = "qa"  ]; then
-            echo "::set-env name=AWSACCOUNT::100197454175"
+            echo "AWSACCOUNT=100197454175" >> $GITHUB_ENV
           elif [ $ENVIRONMENT = "train"  ]; then
-            echo "::set-env name=AWSACCOUNT::473415446686"
+            echo "AWSACCOUNT=473415446686" >> $GITHUB_ENV
           elif [ $ENVIRONMENT = "prod"  ]; then
-            echo "::set-env name=AWSACCOUNT::859196241863"
+            echo "AWSACCOUNT=859196241863" >> $GITHUB_ENV
           else
-            echo "::set-env name=AWSACCOUNT::047738714325"        
+            echo "AWSACCOUNT=047738714325" >> $GITHUB_ENV
           fi        
     
       - name: Set deployment status in-progress 
