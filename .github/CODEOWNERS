@@ -1,0 +1,14 @@
+# https://help.github.com/en/github/creating-cloning-and-archiving-repositories/about-code-owners
+
+# These owners will be the default owners for everything in
+# the repo. Unless a later match takes precedence, this list
+# of individuals will be requested for review when someone
+# opens a pull request.
+# TODO: Uncomment the appropriate journey, or combine journey with space delimiter
+#*       @nelnet-velocity/client-journey
+#*       @nelnet-velocity/customer-journey
+#*       @nelnet-velocity/servicer-journey
+#*       @nelnet-velocity/rangers
+
+# TODO: Add the journey(s) who also own this workflow at the end
+/.github/workflows/    @nelnet-velocity/devops
