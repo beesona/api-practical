@@ -1,7 +1,7 @@
 name: Deploy Microservice
- 
+
 on: deployment
- 
+
 jobs:
   build:
     name: ${{ github.event.deployment.environment }}-build
@@ -18,13 +18,13 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
- 
+
       - name: checkout repository
         id: checkout
         uses: actions/checkout@v2
         with:
           ref: ${{ github.event.deployment.ref}}
-      
+
 
 
       - name: Dump GitHub context
@@ -51,7 +51,7 @@ jobs:
           export COMMITURL="$HTMLURL/commit/$COMMITID"
           export CODEURL="$HTMLURL/tree/$COMMITID"
           export ACTIONSURL="$HTMLURL/actions/runs/${{ github.run_id }}"
-          export COMMITMESSAGE=$(git log --format=%B -n 1 $COMMITID)
+          export COMMITMESSAGE=$(git log --format=%s -n 1 $COMMITID)
           echo "SERVICENAME=$SERVICENAME" >> $GITHUB_ENV
           echo "DATABASENAME=$DATABASENAME" >> $GITHUB_ENV
           echo "ENVIRONMENT=$ENVIRONMENT" >> $GITHUB_ENV
@@ -73,9 +73,9 @@ jobs:
             echo "AWSACCOUNT=859196241863" >> $GITHUB_ENV
           else
             echo "AWSACCOUNT=047738714325" >> $GITHUB_ENV
-          fi        
-    
-      - name: Set deployment status in-progress 
+          fi
+
+      - name: Set deployment status in-progress
         uses: actions/github-script@v1
         with:
           previews: flash-preview
@@ -85,8 +85,8 @@ jobs:
               repo: context.repo.repo,
               deployment_id: ${{ github.event.deployment.id }},
               state: "in_progress"
-            })      
-      
+            })
+
       - name: Send Teams update in-progress
         run: |
           export TITLE="${{ env.SERVICENAME}} - In-Progress"
@@ -148,7 +148,7 @@ jobs:
             export TITLE="${{ env.SERVICENAME}} - FAIL"
             export THEMECOLOR="FF0000"
             export STATUS="Failure"
-          fi  
+          fi
           export TEXT="<table><tr><td><b>Environment:</b></td><td><a href='${{ env.DEPLOYURL }}'>${{ env.ENVIRONMENT }}</a></td></tr><tr><td><b>Commit Id:</b></td><td><a href='${{ env.CODEURL}}'>${{ env.COMMITID }}</a></td></tr><tr><td><b>Commit Message:</b></td><td><a href='${{ env.COMMITURL }}'>${{ env.COMMITMESSAGE }}</a></td></tr><tr><td><b>Status:</b></td><td><a href='${{ env.ACTIONSURL }}'>$STATUS</a></td></tr></table>"
           export TEAMSCARD=$(jq --arg title "$TITLE" --arg text "$TEXT" --arg themecolor "$THEMECOLOR" '.title = $title | .text = $text | .themeColor = $themecolor' -r .github/workflows/teamscard.json)
           curl \
@@ -157,7 +157,7 @@ jobs:
           -X POST \
           ${{ env.TEAMSURL }}
 
-      - name: upload-artifact    
+      - name: upload-artifact
         uses: actions/upload-artifact@v1
         with:
           name: ${{ github.event.deployment.environment }}-artifact
