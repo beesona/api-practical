@@ -52,11 +52,11 @@
       "typescript-rest-swagger": "0.0.18"
     },
     "dependencies": {
-      "@nelnet/apigateway-customdomain-middleware": "^1.0.1",
-      "@nelnet/express-lowercase-query": "^1.0.2",
-      "@nelnet/pg-helpers": "1.1.1",
-      "@nelnet/quasar-security-middleware": "^1.0.38",
-      "@nelnet/sql-tag": "^1.2.0",
+      "@nelnet/apigateway-customdomain-middleware": "^1.0.2",
+      "@nelnet/express-lowercase-query": "^1.0.3",
+      "@nelnet/pg-helpers": "1.2.1",
+      "@nelnet/quasar-security-middleware": "^1.0.39",
+      "@nelnet/sql-tag": "^1.2.1",
       "aws-sdk": "^2.452.0",
       "aws-serverless-express": "^3.2.0",
       "aws-xray-sdk": "2.3.5",
