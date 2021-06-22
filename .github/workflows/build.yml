@@ -61,7 +61,6 @@ jobs:
           echo "CODEURL=$CODEURL" >> $GITHUB_ENV
           echo "ACTIONSURL=$ACTIONSURL" >> $GITHUB_ENV
           echo "COMMITMESSAGE=$COMMITMESSAGE" >> $GITHUB_ENV
-          echo "TEAMSURL=https://outlook.office.com/webhook/297225ee-7306-43e6-9bbf-3b620ce7c9cc@5a5b9e61-20b2-4578-8f37-246881fa0d61/IncomingWebhook/66a7f59f31cc42f5b2ac6a652f43a331/7ac909ce-260b-45cf-a553-7d7ca24c5e91" >> $GITHUB_ENV
           echo "DEPLOYURL=$HTMLURL/deployments?environment=$ENVIRONMENT#activity-log" >> $GITHUB_ENV
           if [ $ENVIRONMENT = "dev" ]; then
             echo "AWSACCOUNT=047738714325" >> $GITHUB_ENV
@@ -96,7 +95,7 @@ jobs:
           -H 'Content-Type: application/json' \
           -d "$TEAMSCARD" \
           -X POST \
-          ${{ env.TEAMSURL }}
+          ${{ secrets.VELOCITY_SERVICING_TEAMS_WEBHOOK_URI }}
 
 
       - name: Build using ECR image
@@ -155,7 +154,7 @@ jobs:
           -H 'Content-Type: application/json' \
           -d "$TEAMSCARD" \
           -X POST \
-          ${{ env.TEAMSURL }}
+          ${{ secrets.VELOCITY_SERVICING_TEAMS_WEBHOOK_URI }}
 
       - name: upload-artifact
         uses: actions/upload-artifact@v1
