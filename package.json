@@ -19,7 +19,7 @@
     "gulp": "gulp scripts/assets",
     "local": "clear && npm run gulp && npm run swagger && npm start",
     "build": "npm install && npm run gulp && npm run swagger",
-    "build-ci": "npm ci && npm run gulp && npm run swagger",
+    "build-ci": "npm ci && npm run gulp && npm run swagger && npm prune --production",
     "swagger": "swaggerGen -c swaggerconfig.json",
     "lint": "tslint -c tslint.json 'src/**/*.ts'",
     "nsp": "nsp check ."
