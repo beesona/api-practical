@@ -1,16 +1,16 @@
 {
-  "name": "<NAMESPACE>",
-  "version": "1.0.0",
-  "description": "",
+  "name": "api-practical",
+  "version": "0.0.1",
+  "description": "A pretty basic API implemented for the purpose of evaluating candidate experience.",
   "keywords": [],
   "license": "UNLICENSED",
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://git-codecommit.us-west-2.amazonaws.com/v1/repos/<SERVICENAME>"
+    "url": "https://github.com/beesona/api-practical"
   },
   "bugs": {
-    "email": "z-CL-Quasar@nelnet.net"
+    "email": "adam.beeson@nelnet.net"
   },
   "main": "index.js",
   "scripts": {

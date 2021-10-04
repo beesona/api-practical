@@ -2,10 +2,6 @@
 import * as log4js from 'log4js';
 // tslint:disable: no-var-requires
 const local = require('./api.json');
-const dev = require('./dev.json');
-const qa = require('./qa.json');
-const train = require('./train.json');
-const prod = require('./prod.json');
 // tslint:enable: no-var-requires
 
 function getConfig() {
@@ -42,13 +38,6 @@ function getConfig() {
   });
 
   let config;
-  switch (process.env.NODE_ENV) {
-    case 'dev': config = dev; break;
-    case 'qa': config = qa; break;
-    case 'train': config = train; break;
-    case 'prod': config = prod; break;
-    default: config = local;
-  }
   log4js.configure(config.log4js);
   return config;
 }

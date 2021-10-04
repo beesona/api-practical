@@ -4,12 +4,12 @@
     },
     "migrate": {
         "driver": "pg",
-        "user":  {"ENV": "DB_USERID"},
-        "password": {"ENV": "DB_PASSWORD"},
+        "user":  "postgres",
+        "password": "mysecretpassword",
         "host": "localhost",
-        "database": {"ENV": "DB_NAME"},
+        "database": "postgres",
         "schema": "public",
-        "port": {"ENV": "DB_PORT"}
+        "port": "5432"
     },
     "create": {
         "driver": "pg",

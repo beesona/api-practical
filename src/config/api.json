@@ -3,22 +3,9 @@
         "localPort": "3000"
     },
     "endPoints": {
-        "securityTokenV1Authenticate": {
-            "host": "https://development.nelnet.io/authapi/",
-            "resource": "authenticate"
-        }
-    },
-        "credentials": {
-        "aws": {
-            "accessKeyId": "",
-            "secretAccessKey": "",
-            "region": "us-west-2"
-        }
-    },
-
-    "awsArns": {
-        "eventGlobalTopic": {
-            "arn": "arn:aws:sns:us-west-2:047738714325:dev-quasarglobal"
+        "someOtherEndpoint": {
+            "host": "https://127.0.0.1/",
+            "resource": "someOtherResource"
         }
     },
     "dataSources": {
