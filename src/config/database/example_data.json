@@ -1,0 +1,35 @@
+[
+    {
+        "id": "1",
+        "firstName": "Harvey",
+        "lastName": "Wallbanger",
+        "address": {
+            "street": "7150 Fulton St",
+            "city": "Centennial",
+            "state": "CO",
+            "zip": "80112"
+        }
+    },
+    {
+        "id": "2",
+        "firstName": "Tom",
+        "lastName": "Collins",
+        "address": {
+            "street": "200 E Colfax Ave",
+            "city": "Denver",
+            "state": "CO",
+            "zip": "80203"
+        }
+    },
+    {
+        "id": "3",
+        "firstName": "Shirley",
+        "lastName": "Temple",
+        "address": {
+            "street": "1701 Bryant St",
+            "city": "Denver",
+            "state": "CO",
+            "zip": "80204"
+        }
+    }
+]
