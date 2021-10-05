@@ -2,13 +2,10 @@ import {
     validate, validateOrReject, ValidationError, Validator, ValidatorConstraint,
     ValidatorConstraintInterface, ValidatorOptions
 } from 'class-validator';
-import * as log4js from 'log4js';
-import * as path from 'path';
-import * as uuidValidate from 'uuid-validate';
+import uuidValidate from 'uuid-validate';
 import { CustomValidationError } from './CustomValidationHelper';
 import { BadRequestError } from './error';
 
-const logger = log4js.getLogger(path.basename(__filename));
 const validator = new Validator();
 
 export enum ValidationGroup {
@@ -40,7 +37,7 @@ export abstract class Validatable {
 
 @ValidatorConstraint()
 export class AmountIsCurrency implements ValidatorConstraintInterface {
-    validate(amountToCheck: number) {
+    validate(amountToCheck: number): boolean {
         const amountStr = `${amountToCheck}`;
         const parts = amountStr.split('.');
         if (parts.length > 2) {
@@ -54,7 +51,7 @@ export class AmountIsCurrency implements ValidatorConstraintInterface {
 }
 
 export class UuidValidation {
-    public validateUuid(uuid, uuidPropertyName: string, constraintError?: string) {
+    public validateUuid(uuid, uuidPropertyName: string, constraintError?: string): boolean {
         if (uuid && !uuidValidate(uuid, 4)) {
             const returnErrors = Array<CustomValidationError>();
             const newError = new CustomValidationError();
@@ -78,7 +75,7 @@ export class UuidValidation {
 
 @ValidatorConstraint()
 export class IsUUIDs implements ValidatorConstraintInterface {
-    validate(text: string[]) {
+    validate(text: string[]): boolean {
         text.forEach(id => {
             if (!uuidValidate(id, 4)) {
                 throw new BadRequestError({

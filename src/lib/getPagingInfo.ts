@@ -1,4 +1,4 @@
-export function getPagingInfo(route: string, offset: number, limit: number, total: number, additionalParams: string = '') {
+export function getPagingInfo(route: string, offset: number, limit: number, total: number, additionalParams = '') {
     const pages = limit > 0 ? Math.ceil(total / limit) : 0;
     return {
         rows: total,

@@ -25,9 +25,9 @@ export class PublishEvent {
                 }
             }
         })
-        .promise()
-        .catch(err => {
-            logger.error(`Error publishing SNS event: ${err}`);
-        });
+            .promise()
+            .catch(err => {
+                logger.error(`Error publishing SNS event: ${err}`);
+            });
     }
 }

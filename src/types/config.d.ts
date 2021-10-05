@@ -1,11 +1,9 @@
-import { DatasourceConfig } from '@nelnet/pg-helpers';
-
 export type ApiConfig = {
     apiSettings: ApiSettingsConfig;
     endPoints: EndpointsConfig;
     credentials: CredentialsConfig;
     awsArns: ArnsConfig;
-    dataSources: DatasourceConfig;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     log4js: any;
 }
 
