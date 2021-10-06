@@ -1,4 +1,7 @@
-# Welcome to Nelnet Velocity!
+<p align="center">
+<img width="50%" src="https://github.com/beesona/api-practical/blob/master/assets/nelnet.svg?raw=true" />
+</p>
+
 
 Hey there! Thanks for taking the time to get to know us, and let us get to know you! This application is a simple real-world example of one of our RESTful APIs. Before we begin, let's look the prerequisites we need to square away and then cover today's objectives.
 
