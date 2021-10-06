@@ -1,12 +1,9 @@
 import { DELETE, GET, HttpError, Path, PathParam, POST, PUT, QueryParam, Return } from 'typescript-rest';
 import { Tags } from 'typescript-rest-swagger';
-import { getPagingInfo } from '../lib/getPagingInfo';
-import { ConsoleLoggingManager } from '../managers/ConsoleLoggingManager';
-import { ILoggingManager } from '../managers/ILoggingManager';
 import { UserManager } from '../managers/UserManager';
 import { BadRequestError, InternalServerError, NotFoundError, NotImplementedError } from '../types/error';
 import { User, UserObject, UserPostBody } from '../types/model/User';
-import { PagedResponseBody, ResponseBody } from '../types/response';
+import { ResponseBody } from '../types/response';
 import { ValidationGroup } from '../types/validation';
 
 @Tags('User Service')
@@ -14,35 +11,17 @@ import { ValidationGroup } from '../types/validation';
 class UserV1Router {
 
     private data: UserManager;
-    private logger: ILoggingManager;
 
     constructor(){
         this.data = new UserManager();
-        this.logger = new ConsoleLoggingManager(UserV1Router.name);
     }
 
     /**
      * Get all Users
-     * @param offset The start of the page
-     * @param limit the size of the page
      */
     @GET
-    // eslint-disable-next-line @typescript-eslint/no-inferrable-types
-    async get(@QueryParam('offset') offset: number = 0, @QueryParam('limit') limit: number = 20): Promise<PagedResponseBody<User[]>> {
-        try {
-            const [
-                items, totalCount
-            ] = await Promise.all([
-                this.data.get(offset, limit),
-                this.data.count()
-            ]);
-            return {
-                data: items,
-                paging: getPagingInfo('/v1/Users', offset, limit, totalCount)
-            };
-        } catch (err) {
-            throw (err instanceof HttpError) ? err : new InternalServerError({ description: 'Query Issue', info: err });
-        }
+    async getAll(): Promise<User[]> { // TODO: make this endpoint support pagination.
+        return this.data.getAll();
     }
 
     /**
@@ -51,21 +30,9 @@ class UserV1Router {
      */
     @Path(':userid')
     @GET
-    async getById(@PathParam('userid') userId: string): Promise<ResponseBody<User>> {
+    async getById(@PathParam('userid') userId: string): Promise<ResponseBody<User>> { // TODO: lets handle our request and response with a try catch block.
 
-        try {
-            const item = await this.data.getById(userId);
-
-            if (!item) {
-                throw new NotFoundError({ description: 'Not Found', info: `No User found with id ${userId}` });
-            }
-
-            return {
-                data: item
-            };
-        } catch (err) {
-            throw (err instanceof HttpError) ? err : new InternalServerError({ description: 'Query Issue', info: err });
-        }
+        const item = await this.data.getById(userId);
     }
 
     /**
@@ -75,22 +42,7 @@ class UserV1Router {
     @POST
     async post(body: UserPostBody): Promise<Return.NewResource<ResponseBody<User>>> {
 
-        const user = new UserObject(body.firstName, body.lastName, body.address);
-
-        try {
-            await user.validateOrReject({ groups: [
-                ValidationGroup.Post
-            ] });
-        } catch (validationErrors) {
-            throw new BadRequestError({ description: 'Validation Error', body: validationErrors });
-        }
-
-        try {
-            const item = await this.data.add(user);
-            return new Return.NewResource<ResponseBody<User>>(`/Users/${item.id}`, { data: item });
-        } catch (err) {
-            throw (err instanceof HttpError) ? err : new InternalServerError({ description: 'Query Issue', info: err });
-        }
+        throw new NotImplementedError({ description: 'Not Implemented' }); // TODO: hook to manager.
     }
 
     /**
@@ -100,7 +52,7 @@ class UserV1Router {
      */
     @Path(':UserId')
     @PUT
-    async put(@PathParam('UserId') UserId: string, body: User): Promise<ResponseBody<User>> {
+    async put(@PathParam('UserId') UserId: string, body: User): Promise<ResponseBody<User>> { // TODO: hook to manager.
 
         throw new NotImplementedError({ description: 'Not Implemented' });
     }
@@ -111,7 +63,7 @@ class UserV1Router {
      */
     @Path(':userid')
     @DELETE
-    async delete(@PathParam('userid') userId: string): Promise<ResponseBody<string>> {
+    async delete(@PathParam('userid') userId: string): Promise<ResponseBody<string>> { // TODO: hook to manager.
 
         throw new NotImplementedError({ description: 'Not Implemented' });
     }

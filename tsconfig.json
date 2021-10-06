@@ -7,7 +7,6 @@
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "forceConsistentCasingInFileNames": true,
-        "resolveJsonModule": true,
         "esModuleInterop": true
     },
     "include": [

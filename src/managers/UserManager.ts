@@ -1,47 +1,35 @@
 import { User } from "../types/model/User";
+// TODO: Fix the project to allow JSON objects. Hint: listen to hints :) 
 import data from '../config/database/example_data.json';
+import { NotImplementedError } from "../types/error";
 
 export class UserManager { 
 
+    // TODO: implement and instantiate a LoggingManager.
     private userData: User[] = data;
 
-    constructor(){
-    }
-
-    count(): number { 
-        return this.userData.length;
-    }
-
+    // TODO: update this method to support pagination.
     getAll(): User[] { 
         return this.userData;
     }
 
-    get(offset: number, limit: number): User[] { 
-        const result =  this.userData.slice(offset, offset + limit);
-        return result;
-    }
-
+    // TODO: implement a method to return a user by ID.
     getById(id: string): User { 
-        return this.userData.find(i => i.id === id);
+        throw new NotImplementedError({ description: 'Not Implemented' });
     }
 
+    // TODO: Implement an Add User method to add a UserObject.
     add(user: User): User {
-        this.userData.push(user);
-        
-        return user;
+        throw new NotImplementedError({ description: 'Not Implemented' });
     }
 
-    update(id: string, user: User): string { 
-        const originalItem = this.getById(id);
-        const itemIndex = this.userData.indexOf(originalItem);
-        this.userData[itemIndex] = user;
-        return `${id} updated.`;
+    // TODO: implement a method to update an existing user.
+    update(): string { 
+        throw new NotImplementedError({ description: 'Not Implemented' });
     }
 
+    // TODO: imeplement a method to delete an existing user.
     delete(id: string): string { 
-        const user = this.getById(id);
-        this.userData = this.userData.filter(user => user !== user);
-
-        return 'User Removed.';
+        throw new NotImplementedError({ description: 'Not Implemented' });
     }
 }
