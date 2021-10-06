@@ -32,9 +32,14 @@ Like solving a problem in your normal day job, use the resources available to yo
 
 # Ok, Let's Go
 - [ ] Perform a git clone of this repository and branch off of the **feature** branch.
-		- `git clone git@github.com:beesona/api-practical.git`
-		- `git checkout feature`
-		- `git checkout -b YOURNAME-feature`
+		<div>
+			<ul>
+				<li>`git clone git@github.com:beesona/api-practical.git`</li>
+				<li>`git checkout feature`</li>
+				<li>`git checkout -b YOURNAME-feature`</li>
+			</ul>
+		</div>
+
 	> **note**: The `master` branch contains a mostly finished version of the application. The exercise will be based on your work against the `feature` branch so ensure that is the branch your are branching off of.
 - [ ] Perform the following to ensure the app is can compile.
 		- `npm install`
