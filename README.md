@@ -51,9 +51,11 @@ Like solving a problem in your normal day job, use the resources available to yo
 		- Typescript code issues; review the build output to determine if there are any code issues checked into the `feature` branch that might be causing issues.
 - [ ] Implement the Application Logic for the CRUD operations in the UsersManager.
 	- [ ] GetAll
+		- [ ] Implement an optional parameter that tells the method to sort and return the collection ordered alphabetically
 	- [ ] GetById
 	- [ ] Create
 	- [ ] Update
+	- [ ] CopyAddress (Copy the address of one user to another)
 	- [ ] Delete
 - [ ] Implement the router logic for the CRUD operations handled by the UsersManager.
 	- [ ] **GET** Users
@@ -63,6 +65,7 @@ Like solving a problem in your normal day job, use the resources available to yo
 		- [ ] Add validator for UUID provided in request.
 	- [ ] **POST** User
 	- [ ] **PUT** User
+	- [ ] **PATCH** User Address ( /User/copyAddress/{copiedUserId}/{targetUserId} )
 	- [ ] **DELETE** User
 - [ ] Create a LoggingManager that logs to console and implement an interface that exposes methods to log the following:
 	- [ ] Info
