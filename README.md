@@ -64,6 +64,6 @@ Like solving a problem in your normal day job, use the resources available to yo
 - [ ] TODO hunting: find any TODO comments that arent for anything above to work through.
 
 # Conclusion
-![Its over! Its finally done!](https://github.com/beesona/api-practical/tree/master/assets/frodo.jpeg?raw=true)
+![Its over! Its finally done!](https://github.com/beesona/api-practical/blob/master/assets/frodo.jpeg?raw=true)
 
 Thank you for spending time with us today! If you have any questions on the exercise, or feedback, we'd love to hear it. Thanks again!
